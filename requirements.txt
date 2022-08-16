@@ -1,0 +1,32 @@
+# PyTorch/TorchVision -------------------------
+# Do not add pytorch/torchvision here. For PyTorch and TorchVision
+# follow the official instructions at https://pytorch.org/get-started/locally/
+# to install PyTorch 1.7.1+ and torchvision 0.8.2+
+# torch>=1.7.1
+# torchvision>=0.8.2
+
+# base ----------------------------------------
+# Just like PyTorch, user should install
+# opencv themselves, preferrably by OS's package manager, or by
+# choosing the proper pypi package name at https://github.com/skvark/opencv-python
+# opencv-python>=4.1.2
+matplotlib>=3.2.2
+numpy>=1.18.5
+Pillow>=8.0.0
+PyYAML>=5.3.1
+scipy>=1.4.1
+tqdm>=4.41.0
+
+# export --------------------------------------
+onnx>=1.8.0
+onnxsim>=0.4.1
+
+# plotting ------------------------------------
+ipython
+tabulate
+pandas
+
+# extras --------------------------------------
+# pycocotools on PyPI needs python3.7 as minimal
+# pycocotools>=2.0.2  # corresponds to https://github.com/ppwwyyxx/cocoapi
+thop  # FLOPs computation
