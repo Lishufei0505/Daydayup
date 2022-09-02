@@ -68,6 +68,30 @@ def save_one_json(predn, jdict, path, class_map):
             'bbox': [round(x, 3) for x in b],
             'score': round(p[4], 5)})
 
+# def process_batch(detections, labels, iouv):
+    """
+    # Return correct predictions matrix. Both sets of boxes are in (x1, y1, x2, y2) format.
+    # Arguments:
+    #     detections (Array[N, 6]), x1, y1, x2, y2, conf, class
+    #     labels (Array[M, 5]), class, x1, y1, x2, y2
+    # Returns:
+    #     correct (Array[N, 10]), for 10 IoU levels
+    # """
+    # correct = torch.zeros(detections.shape[0], iouv.shape[0], dtype=torch.bool, device=iouv.device)
+    # iou = box_iou(labels[:, 1:], detections[:, :4])
+    # x = torch.where((iou >= iouv[0]) & (labels[:, 0:1] == detections[:, 5]))  # IoU above threshold and classes match
+    # if x[0].shape[0]:
+    #     matches = torch.cat((torch.stack(x, 1), iou[x[0], x[1]][:, None]), 1).cpu().detach().numpy()  # [label, detection, iou]
+    #     if x[0].shape[0] > 1:
+    #         matches = matches[matches[:, 2].argsort()[::-1]]
+    #         matches = matches[np.unique(matches[:, 1], return_index=True)[1]]
+    #         # matches = matches[matches[:, 2].argsort()[::-1]]
+    #         matches = matches[np.unique(matches[:, 0], return_index=True)[1]]
+    #     matches = torch.Tensor(matches).to(iouv.device)
+    #     correct[matches[:, 1].long()] = matches[:, 2:3] >= iouv
+    # return correct
+
+
 
 def process_batch(detections, labels, iouv):
     """
@@ -78,13 +102,17 @@ def process_batch(detections, labels, iouv):
     Returns:
         correct (Array[N, 10]), for 10 IoU levels
     """
+    # print("val----detections------:", detections[:, :4])
+    # print("val----labels------:", labels[:, 1:])
     correct = np.zeros((detections.shape[0], iouv.shape[0])).astype(bool)
     iou = box_iou(labels[:, 1:], detections[:, :4])
+    # print("iou:", iou)
     correct_class = labels[:, 0:1] == detections[:, 5]
+    # print("labels:", labels[:, 0:1], " detections:", detections[:, 5], "correct_class:",correct_class)
     for i in range(len(iouv)):
         x = torch.where((iou >= iouv[i]) & correct_class)  # IoU > threshold and classes match
         if x[0].shape[0]:
-            matches = torch.cat((torch.stack(x, 1), iou[x[0], x[1]][:, None]), 1).cpu().numpy()  # [label, detect, iou]
+            matches = torch.cat((torch.stack(x, 1), iou[x[0], x[1]][:, None]), 1).cpu().detach().numpy()  # [label, detect, iou]
             if x[0].shape[0] > 1:
                 matches = matches[matches[:, 2].argsort()[::-1]]
                 matches = matches[np.unique(matches[:, 1], return_index=True)[1]]
